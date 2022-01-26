@@ -9,22 +9,26 @@ class Quiz {
     this.incorrectAnswers = incorrectAnswers;
   }
 }
+
+const requestApi = async() => {
+  try {
+    const response = await fetch("https://opentdb.com/api.php?amount=10&type=multiple");
+    const responseObject = await response.json();
+    const quizes = responseObject.results;
+    return quizes;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const makeInstance = (quizes) => {
+  const quiz = new Quiz(quizes[0].category, quizes[0].difficulty, quizes[0].question, quizes[0].correct_answer, quizes[0].incorrect_answers);
+  return quiz;
+};
+
 module.exports = {
   getQuizData: async() => {
-    try {
-      const response = await fetch("https://opentdb.com/api.php?amount=10&type=multiple");
-      const responseObject = await response.json();
-      const quizes = responseObject.results;
-      const index = 0;
-      return new Quiz(
-        quizes[index].category,
-        quizes[index].difficulty,
-        quizes[index].question,
-        quizes[index].correct_answer,
-        quizes[index].incorrect_answers,
-      );
-    } catch (e) {
-      console.log(e);
-    }
+    const quizes = await requestApi();
+    return makeInstance(quizes);
   }
 };
