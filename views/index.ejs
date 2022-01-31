@@ -1,9 +1,25 @@
 <%- include("parts/header"); %>
 
-<h1>ようこそ</h1>
+<h1 id="title">ようこそ</h1>
+<h2 id="genre"></h2>
+<h2 id="difficulty"></h2>
 <hr>
-<p>以下のボタンをクリック</p>
+<p id="question">以下のボタンをクリック</p>
 <hr>
-<button>開始</button>
+<div id="answerDiv"></div>
+<button id="startBtn">開始</button>
+
+<script>
+  const startBtn = document.getElementById("startBtn");
+  const title = document.getElementById("title");
+  const question = document.getElementById("question");
+
+  startBtn.addEventListener("click", () => {
+    title.textContent = "取得中";
+    question.textContent = "少々お待ちください";
+    document.body.removeChild(startBtn);
+    window.location.href = "/quiz";
+  });
+</script>
 
 <%- include("parts/footer"); %>
