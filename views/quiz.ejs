@@ -1,0 +1,88 @@
+<%- include("parts/header"); %>
+
+<h1 id="title"></h1>
+<h2 id="genre"></h2>
+<h2 id="difficulty"></h2>
+<hr>
+<p id="question"></p>
+<hr>
+<div id="answerDiv"></div>
+
+<script>
+  // 変数宣言
+  let quizes = <%- data %>;
+  let quizIndex = 0;
+  let correctNum = 0;
+
+  // htmlのelementオブジェクトを取得
+  const title = document.getElementById('title');
+  const genre = document.getElementById('genre');
+  const difficulty = document.getElementById('difficulty');
+  const question = document.getElementById('question');
+  const answerDiv = document.getElementById('answerDiv');
+
+  // 回答ボタンをDOMに追加
+  const makeAnswerBtn = (answer) => {
+    const answerBtn = document.createElement('button');
+    answerBtn.textContent = answer;
+    answerDiv.appendChild(answerBtn);
+    answerDiv.appendChild(document.createElement('br'));
+    return answerBtn;
+  }
+
+  // 回答ボタンを削除
+  const deleteAnswerBtn = () => {
+    while (answerDiv.firstChild) {
+      answerDiv.removeChild(answerDiv.firstChild);
+    }
+  }
+
+  // スコアを表示
+  const showScore = () => {
+    title.textContent = `あなたの正解数は${correctNum}です！！`;
+    question.textContent = "再度チャレンジしたい場合は以下をクリック！！";
+    document.body.removeChild(genre);
+    document.body.removeChild(difficulty);
+    deleteAnswerBtn();
+    const retryBtn = document.createElement('button');
+    retryBtn.textContent = "ホームに戻る";
+    answerDiv.appendChild(retryBtn);
+    retryBtn.addEventListener('click', () => {
+      quizes = [];
+      window.location.href = "/";
+    });
+  }
+
+  // 問題を表示
+  const showQuestion = (quizes) => {
+    const quiz = quizes[quizIndex];
+    title.textContent = `問題${quizIndex+1}`;
+    genre.textContent = `【ジャンル】${quiz.category}`;
+    difficulty.textContent = `【難易度】${quiz.difficulty}`;
+    question.textContent = quiz.question;
+    deleteAnswerBtn();
+
+    // 回答ボタンを表示、クリックイベント
+    quiz.allAnswers.forEach(answer => {
+      makeAnswerBtn(answer).addEventListener('click', () => {
+        quizIndex++;
+        // 正誤判定
+        if (makeAnswerBtn(answer).textContent === quiz.correctAnswer){
+          correctNum++;
+        }
+        // 10問目を答えたらスコアを表示
+        if (quizIndex === 10) {
+          showScore();
+        } else {
+          showQuestion(quizes);
+        }
+      });
+    });
+  }
+
+  // 実行
+  showQuestion(quizes);
+
+</script>
+
+<%- include("parts/footer"); %>
